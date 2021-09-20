@@ -23,8 +23,11 @@ def stream_handler(message):
     db.child("data").update({'name':'mbsa','age':456})
 @app.route("/")
 def start():
-    my_stream = db.child("data").stream(stream_handler)
     return "Flask Server Started!!!"
+@app.route("/<string:title>/<string:body>")
+def send(title,body):
+    result = push_service.notify_single_device(registration_id="cRsi5BbdRF-L0iIk4AMOjC:APA91bFUaTUVXmwGlSVgOm8HqLm1c64acOu55NJCR0Cyni3CTn8wXFnwb4A_yKrGUwPhJxak60KnJmPUMXpKadVRgCnefW832XkCpJozw-NvKO4oA_lOC3uj8GEDOLfzGFHtmKIz_Us9", message_title=title, message_body=body)
+    return result
 
 
 
