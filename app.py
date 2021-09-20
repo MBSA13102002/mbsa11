@@ -30,5 +30,3 @@ my_stream = db.child("data").stream(stream_handler)
 
 
 
-if __name__ =="__main__":
-    app.run()
