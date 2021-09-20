@@ -18,7 +18,7 @@ config = {
 firebase = Firebase(config)
 db = firebase.database()
 push_service = FCMNotification(api_key="AAAASNIN9qU:APA91bHwPAZyam3Uc4RZd2abDCeqj8Y8d8z-YR40EbnzaX98242piyWtuNn_WzGG1Rj4YTCid-1hJmtDT2Xle8gku65N32mMHdf5oKFPr6It5_npF7hbV7BzcUZSvEmmkhf-SOVTKQoN")
-app.route("/")
+@app.route("/")
 def start():
     return "Flask Server Started!!!"
 def stream_handler(message):
