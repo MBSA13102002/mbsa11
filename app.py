@@ -29,7 +29,5 @@ def stream_handler(message):
 @app.route('/')
 def index():
     my_stream = db.child("stream").stream(stream_handler,user['idToken'])
-    __name = db.child("stream").child("name").get().val()
-    socketio.emit('price update',__name, broadcast=True)
     return render_template('index.html')
 
