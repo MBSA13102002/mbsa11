@@ -16,7 +16,8 @@ config = {
 }
 firebase = Firebase(config)
 db = firebase.database()
-
+auth = firebase.auth()
+user = auth.sign_in_with_email_and_password("mbsa@gmail.com", "reticulated")
 app = Flask(__name__)
 socketio = SocketIO(app)
 def stream_handler(message):
@@ -27,7 +28,7 @@ def stream_handler(message):
 
 @app.route('/')
 def index():
-    my_stream = db.child("stream").stream(stream_handler)
+    my_stream = db.child("stream").stream(stream_handler,user['idToken'])
     __name = db.child("stream").child("name").get().val()
     socketio.emit('price update',__name, broadcast=True)
     return render_template('index.html')
