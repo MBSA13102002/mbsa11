@@ -38,7 +38,7 @@ def job():
 
 @app.route('/')
 def index():
-    my_stream = db.child("stream").stream(stream_handler)
+    my_stream = db.child("stream").stream(stream_handler,db.generate_key())
     return render_template('index.html')
 
 if __name__ == '__main__':
