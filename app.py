@@ -35,9 +35,12 @@ def job():
 # scheduler = BackgroundScheduler()
 # running_job = scheduler.add_job(job, 'interval', seconds=4, max_instances=1)
 # scheduler.start()
-
+my_stream = db.child("stream").stream(stream_handler)
 @app.route('/')
 def index():
-    my_stream = db.child("stream").stream(stream_handler)
+    __name = db.child("stream").child("name").get().val()
+    socketio.emit('price update',__name, broadcast=True)
     return render_template('index.html')
 
+if __name__ == '__main__':
+    socketio.run(app,host="127.0.0.1")
