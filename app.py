@@ -1,34 +1,45 @@
-
-from flask import Flask
+from flask import Flask, render_template
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask_socketio import SocketIO, emit
+import random
 from pyfcm import FCMNotification
+push_service = FCMNotification(api_key="AAAASNIN9qU:APA91bHwPAZyam3Uc4RZd2abDCeqj8Y8d8z-YR40EbnzaX98242piyWtuNn_WzGG1Rj4YTCid-1hJmtDT2Xle8gku65N32mMHdf5oKFPr6It5_npF7hbV7BzcUZSvEmmkhf-SOVTKQoN")
 from firebase import Firebase
-app = Flask(__name__)
-
 config = {
-   "apiKey": "AIzaSyCXPd4UyuKTV2tQmll8tLqr7n4fi63VRXE",
-  "authDomain": "php-mbsa.firebaseapp.com",
-  "databaseURL": "https://php-mbsa-default-rtdb.firebaseio.com",
-  "projectId": "php-mbsa",
-  "storageBucket": "php-mbsa.appspot.com",
-  "messagingSenderId": "495110636533",
-  "appId": "1:495110636533:web:fdf96b5e19d9e73324d6bc",
-  "measurementId": "G-YFPZ05BCKE"
+    "apiKey": "AIzaSyBQUpIYvs0WKfP5IMD4TE2IWTvpb5U34Cc",
+   "authDomain": "portfoliomanagement-16f09.firebaseapp.com",
+    "databaseURL": "https://portfoliomanagement-16f09.firebaseio.com",
+    "projectId": "portfoliomanagement-16f09",
+    "storageBucket": "portfoliomanagement-16f09.appspot.com",
+    "messagingSenderId": "505793158040",
+    "appId": "1:505793158040:web:14b9466a349235ef8b69ed",
+    "measurementId": "G-MRCWJ4R5RJ"
 }
-
 firebase = Firebase(config)
 db = firebase.database()
-push_service = FCMNotification(api_key="AAAASNIN9qU:APA91bHwPAZyam3Uc4RZd2abDCeqj8Y8d8z-YR40EbnzaX98242piyWtuNn_WzGG1Rj4YTCid-1hJmtDT2Xle8gku65N32mMHdf5oKFPr6It5_npF7hbV7BzcUZSvEmmkhf-SOVTKQoN")
+
+app = Flask(__name__)
+socketio = SocketIO(app)
 def stream_handler(message):
-    # result = push_service.notify_single_device(registration_id="cRsi5BbdRF-L0iIk4AMOjC:APA91bFUaTUVXmwGlSVgOm8HqLm1c64acOu55NJCR0Cyni3CTn8wXFnwb4A_yKrGUwPhJxak60KnJmPUMXpKadVRgCnefW832XkCpJozw-NvKO4oA_lOC3uj8GEDOLfzGFHtmKIz_Us9", message_title="Data Changed", message_body=message["data"])
-    db.child("data").update({'name':'mbsa','age':456})
-@app.route("/")
-def start():
-    return "Flask Server Started!!!"
-@app.route("/<string:title>/<string:body>")
-def send(title,body):
-    result = push_service.notify_single_device(registration_id="cRsi5BbdRF-L0iIk4AMOjC:APA91bFUaTUVXmwGlSVgOm8HqLm1c64acOu55NJCR0Cyni3CTn8wXFnwb4A_yKrGUwPhJxak60KnJmPUMXpKadVRgCnefW832XkCpJozw-NvKO4oA_lOC3uj8GEDOLfzGFHtmKIz_Us9", message_title=title, message_body=body)
-    return result
+    __name = db.child("stream").child("name").get().val()
+    socketio.emit('price update',__name, broadcast=True)
+    result = push_service.notify_single_device(registration_id="cRsi5BbdRF-L0iIk4AMOjC:APA91bFUaTUVXmwGlSVgOm8HqLm1c64acOu55NJCR0Cyni3CTn8wXFnwb4A_yKrGUwPhJxak60KnJmPUMXpKadVRgCnefW832XkCpJozw-NvKO4oA_lOC3uj8GEDOLfzGFHtmKIz_Us9", message_title="Changed", message_body=__name)
 
+#defines the job
+def job():
+    new_price = random.random();
+    #job emits on websocket
+    socketio.emit('price update',new_price, broadcast=True)
 
+#schedule job
+# scheduler = BackgroundScheduler()
+# running_job = scheduler.add_job(job, 'interval', seconds=4, max_instances=1)
+# scheduler.start()
 
+@app.route('/')
+def index():
+    my_stream = db.child("stream").stream(stream_handler)
+    return render_template('index.html')
 
+if __name__ == '__main__':
+    socketio.run(app,host="127.0.0.1")
