@@ -35,9 +35,9 @@ def job():
 # scheduler = BackgroundScheduler()
 # running_job = scheduler.add_job(job, 'interval', seconds=4, max_instances=1)
 # scheduler.start()
-my_stream = db.child("stream").stream(stream_handler,db.generate_key())
+
 @app.route('/')
 def index():
-
+    my_stream = db.child("stream").stream(stream_handler,db.generate_key())
     return render_template('index.html')
 
