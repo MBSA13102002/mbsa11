@@ -1,5 +1,4 @@
 from flask import Flask, render_template
-from apscheduler.schedulers.background import BackgroundScheduler
 from flask_socketio import SocketIO, emit
 import random
 from pyfcm import FCMNotification
@@ -25,16 +24,7 @@ def stream_handler(message):
     socketio.emit('price update',__name, broadcast=True)
     result = push_service.notify_single_device(registration_id="cRsi5BbdRF-L0iIk4AMOjC:APA91bFUaTUVXmwGlSVgOm8HqLm1c64acOu55NJCR0Cyni3CTn8wXFnwb4A_yKrGUwPhJxak60KnJmPUMXpKadVRgCnefW832XkCpJozw-NvKO4oA_lOC3uj8GEDOLfzGFHtmKIz_Us9", message_title="Changed", message_body=__name)
 
-#defines the job
-def job():
-    new_price = random.random();
-    #job emits on websocket
-    socketio.emit('price update',new_price, broadcast=True)
 
-#schedule job
-# scheduler = BackgroundScheduler()
-# running_job = scheduler.add_job(job, 'interval', seconds=4, max_instances=1)
-# scheduler.start()
 my_stream = db.child("stream").stream(stream_handler)
 @app.route('/')
 def index():
