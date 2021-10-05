@@ -15,7 +15,7 @@
 			if (person != null) {
 
 	
-           var socket = io('https://' + document.domain + ":"+ location.port);
+           var socket = io('https://' + document.domain);
 				socket.on('connect', function() {
 					socket.send(person+"is connected")
 				});
