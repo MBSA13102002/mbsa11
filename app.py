@@ -12,6 +12,7 @@ def handleMessage(msg):
 	send(msg, broadcast=True)
 
 
-@app.route('/')
-def start():
-    	return render_template('index.html')
+# @app.route('/')
+# def start():
+#     	return render_template('index.html')
+
